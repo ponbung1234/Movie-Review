@@ -13,25 +13,21 @@ if(isset($_POST['submitcom'])){
 
     if($name&&$content)
     {
-        $qu = "SELECT * from user WHERE username = '$name'";
+        $qu = "SELECT id,usertype from user WHERE username = '$name'";
         $rows = $connect->query($qu)->fetch_array();
+        $s = "SELECT u_moviescore,c_moviescore from movies WHERE movieid='$movieid'";
+        $row = $connect->query($s)->fetch_array();
         if($rows['usertype']=="User"){
-             $s = "SELECT u_moviescore from movies WHERE movieid='$movieid'";
-             $row = $connect->query($s)->fetch_array();
              $newscore = ($row['u_moviescore']+$score)/2;
-             $connect->query("UPDATE movies SET u_moviescore = '$newscore'");
+             $connect->query("UPDATE movies SET u_moviescore = '$newscore' WHERE movieid='$movieid'");
         }
        else{
-            $s = "SELECT c_moviescore from movies WHERE movieid='$movieid'";
-             $row = $connect->query($s)->fetch_array();
              $newscore = ($row['c_moviescore']+$score)/2;
-             $connect->query("UPDATE movies SET c_moviescore = '$newscore'");
+             $connect->query("UPDATE movies SET c_moviescore = '$newscore' WHERE movieid='$movieid'");
        }
-        
-        
-       
+        $id=$rows['id'];
         $q = "INSERT INTO comment (commenttext,commentofusername,movieid,commentscore
-    ) VALUES ('$content','$name','$movieid','$score')";
+    ) VALUES ('$content','$id','$movieid','$score')";
 
     $result = $connect->query($q);
 }
@@ -52,25 +48,25 @@ else
     <div class="row">
         <?php  
         /*$name = $_SESSION["usernamein"];*/
-        $q = "SELECT * from comment WHERE movieid = '$movieid'";
-        $s = "SELECT user.usertype from user,comment WHERE user.username = comment.commentofusername";
-        $result1 = $connect->query($q);
-        $result2 = $connect->query($s);
-        $row2 = $result2->fetch_array();
-        while ($row1 = $result1->fetch_array()) {
+        /*$q = "SELECT * from comment WHERE movieid = '$movieid'";*/
+        $q = "SELECT user.usertype,user.name,comment.commenttext,comment.commentscore from user,comment WHERE user.id = comment.commentofusername AND movieid = '$movieid'";
+        /*$result1 = $connect->query($q);*/
+        $result = $connect->query($q);
+        
+        while ($row = $result->fetch_array()) {
             ?>
 
             <div class="col-sm-6">
                 <div id="tb-testimonial" class="testimonial testimonial-default-filled">
                     <div class="testimonial-section">
-                        <?php echo $row1['commenttext']; ?></a>
+                        <?php echo $row['commenttext']; ?></a>
                     </div>
                     <div class="testimonial-desc">
                         <img src="images/god/1.jpg" alt="" />
                         <div class="testimonial-writer">
-                            <div class="testimonial-writer-name"><?php echo $row1['commentofusername']; ?></a></div>
-                            <div class="testimonial-writer-designation"><?php echo $row2['usertype']; ?></div>
-                            <b>Score: </b><a class="testimonial-writer-company"><?php echo $row1['commentscore']; ?> </a>
+                            <div class="testimonial-writer-name"><?php echo $row['name']; ?></a></div>
+                            <div class="testimonial-writer-designation"><?php echo $row['usertype']; ?></div>
+                            <b>Score: </b><a class="testimonial-writer-company"><?php echo $row['commentscore']; ?> </a>
                         </div>
                     </div>
                 </div>   
@@ -81,13 +77,8 @@ else
         ?>
         <!-- comment -->    
 
-
-
-
     </div>
 </div>
-
-
 
 
 <br>
@@ -100,7 +91,7 @@ else
 // <!-- Boostrap comment box -->
 if (!isset($_SESSION["usernamein"]))
 {
-    echo "Please login";
+    echo "<h1>Please login to comment<h1>";
 }
 else
 {
