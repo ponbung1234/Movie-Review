@@ -28,16 +28,8 @@
   require_once('navbar.php');
   require_once('connect.php');
 
-  if (isset($_POST['Register'])) {
-    $usernamein = $_POST['usernamein'];
-    $passwd = $_POST['passwd'];
-    $name = $_POST['name'];
-    $Utype = $_POST['Utype'];
-    $query = "INSERT INTO user (username, password, name, usertype) VALUES('$usernamein', '$passwd', '$name', '$Utype')";
-    $connect->query($query);
-//    if ($connect->query($query) === TRUE)
-//        echo "success";
-  }
+  $q="SELECT * FROM movies";
+  $result=$connect->query($q);
 
 ?>
 
@@ -53,65 +45,30 @@
 
         <!-- Page Features -->
         <div class="row text-center">
-
+          <?php
+          while ($row = $result->fetch_array()) { ?>
           <div class="col-lg-3 col-md-6 mb-4">
             <div class="card">
               <!-- Poster It Stephen King-->
-              <img class="card-img-top" src="https://image.ibb.co/hdEmUF/It.png" alt="">
+              <img class="card-img-top" src="<?=$row['moviepic']?>" width="150" height="209">
               <div class="card-body">
-                <h4 class="card-title">IT</h4>
-                <p class="card-text">The latest adaptation of Stephen King's classic horror novel privileges CGI scares over dread and nuance.</p>
+                <h4 class="card-title"><?=$row['moviename']?></h4>
+                <p class="card-text"><?=$row['moviedetail']?></p>
               </div>
               <div class="card-footer">
-                <a href="It.php" class="btn btn-primary">Find Out More!</a>
+                <a href="moviedetail.php?movieid=<?=$row['movieid']?>" class="btn btn-primary">Find Out More!</a>
               </div>
             </div>
           </div>
-          <!--Spiderman poster-->
-          <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card">
-              <img class="card-img-top" src="https://image.ibb.co/id35pF/spiderman_homecoming.jpg" alt="">
-              <div class="card-body">
-                <h4 class="card-title">Spider-Man: Homecoming</h4>
-                <p class="card-text">A young Peter Parker/Spider-Man begins to navigate his newfound identity as the web-slinging superhero.</p>
-              </div>
-              <div class="card-footer">
-                <a href="#" class="btn btn-primary">Find Out More!</a>
-              </div>
-            </div>
-          </div>
-          <!--God of Egypt-->
-          <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card">
-              <img class="card-img-top" src="https://image.ibb.co/dCpd9F/God_of_Egypt.jpg" alt="">
-              <div class="card-body">
-                <h4 class="card-title">Gods of Egypt</h4>
-                <p class="card-text">An Egyptian god battles his vengeful uncle with the aid of a mortal in Alex Proyas' fantasy-adventure film.</p>
-              </div>
-              <div class="card-footer">
-                <a href="godofegypts.php" class="btn btn-primary">Find Out More!</a>
-              </div>
-            </div>
-          </div>
-          <!--The Godfather -->
-          <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card">
-              <img class="card-img-top" src="https://image.ibb.co/nLL1gv/The_Godfather.png" alt="">
-              <div class="card-body">
-                <h4 class="card-title">The Godfather</h4>
-                <p class="card-text">The aging patriarch of an organized crime dynasty transfers control of his clandestine. </p>
-              </div>
-              <div class="card-footer">
-                <a href="moviedetail.php?movieid=1" class="btn btn-primary">Find Out More!</a>
-              </div>
-            </div>
-          </div>
-
+          <?php 
+          }
+           ?>
+          
         </div>
         <!-- /.row -->
 
       </div>
-    </div>
+    
     <!-- /.container -->
 
     <!-- Footer -->

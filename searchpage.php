@@ -35,9 +35,14 @@
 <?php 
 require_once('navbar.php');
 require('connect.php');
-
-$q='SELECT * FROM `movies` ORDER BY `movies`.`c_moviescore` DESC';
-$result=$connect->query($q);
+if(isset($_POST["submit_search"])){
+    $search=$_POST["searchMovie"];
+    /*echo $search;*/
+    $q='SELECT * FROM movies WHERE moviename LIKE "%'.$search.'%"';
+   
+    $result=$connect->query($q);
+    /*echo $row['moviename'];*/
+}
 
 ?>
 
@@ -47,8 +52,18 @@ $result=$connect->query($q);
 <div class="container">
     <br>
     <br>
-    <img src="images/logo.png" width="80" height="80"><font size="6"> &nbsp;Movies Racking</font>
-    
+    <h1>Search from -<?=$search?>- </h1>
+    <?php
+    $count = $result->num_rows;
+    if ($count==0) {
+        # code...
+        ?>
+        <br>
+        <h3>Sorry, <?=$search?> not found.</h3>
+        <?php
+    }
+    ?>
+
     <div id="blog" class="row">
 
         <!-- GODFATHER -->
@@ -79,7 +94,7 @@ $j=$i+10;
  ?>
         <div class="col-md-10 blogShort">
             <br>
-            <h3><?=$i?>&nbsp;.<?=$row['moviename']?></h3>
+            <h3><?=$row['moviename']?></h3>
             <br>
             <div class="row">
                 <div class="col-md-3">
